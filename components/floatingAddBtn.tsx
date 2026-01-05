@@ -4,6 +4,9 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
+/**
+ * Floating action button that navigates to the Add Note screen.
+ */
 const FloatingAddBtn: React.FC = () => {
   const router = useRouter();
   const { theme } = useTheme();
@@ -11,9 +14,11 @@ const FloatingAddBtn: React.FC = () => {
   return (
     <View style={styles.wrapper} pointerEvents="box-none">
       <TouchableOpacity
+        accessibilityLabel="Add note"
+        testID="fab-add"
         style={[styles.button, { backgroundColor: theme.accent }]}
         activeOpacity={0.85}
-        onPress={() => router.push('/addNote' as any)}
+        onPress={() => router.push('/addNote')}
       >
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
@@ -32,7 +37,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",

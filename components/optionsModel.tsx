@@ -1,25 +1,34 @@
 import { useTheme } from "@/theme/themeContext";
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const OptionsModal: React.FC<{ visible: boolean; onClose: () => void; onDelete: () => void }> = ({ visible, onClose, onDelete }) => {
+/**
+ * Bottom options modal shown for a selected note.
+ * - `visible`: whether modal is visible
+ * - `onClose`: called to dismiss the modal
+ * - `onDelete`: called when deletion is confirmed
+ */
+type Props = {
+  visible: boolean;
+  onClose: () => void;
+  onDelete: () => void;
+};
+
+const OptionsModal: React.FC<Props> = ({ visible, onClose, onDelete }) => {
   const { theme } = useTheme();
+
+  const confirmDelete = () => {
+    Alert.alert("Delete note", "Are you sure you want to delete this note?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: onDelete },
+    ]);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.backdrop}>
         <View style={[styles.container, { backgroundColor: theme.card }]}> 
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => {
-              // confirm
-              // eslint-disable-next-line @typescript-eslint/no-var-requires
-              const { Alert } = require("react-native");
-              Alert.alert("Delete note", "Are you sure you want to delete this note?", [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: onDelete },
-              ]);
-            }}
-          >
+          <TouchableOpacity style={styles.row} onPress={confirmDelete}>
             <Text style={[styles.deleteText, { color: "#ef4444" }]}>Delete</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.row} onPress={onClose}>
@@ -38,7 +47,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   container: {
-    backgroundColor: "#fff",
     padding: 12,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
@@ -47,8 +55,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
   },
-  deleteText: { color: "#ef4444", fontWeight: "700" },
-  cancelText: { color: "#111827" },
+  deleteText: { fontWeight: "700" },
+  cancelText: {},
 });
 
 export default OptionsModal;

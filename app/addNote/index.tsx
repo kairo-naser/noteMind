@@ -6,14 +6,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+/**
+ * Add Note screen.
+ * Saves the note when navigating back. Uses refs to avoid repeated state updates.
+ */
 const AddNotePage: React.FC = () => {
   const { addNote } = useNotes();
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const savedRef = useRef(false);
-  const titleRef = useRef(title);
-  const contentRef = useRef(content);
+  const titleRef = useRef<string>(title);
+  const contentRef = useRef<string>(content);
   const addNoteRef = useRef(addNote);
 
   useEffect(() => {
@@ -79,7 +83,7 @@ const AddNotePage: React.FC = () => {
             multiline
           />
 
-          <Text style={[styles.hint, { color: theme.text + "88" }]}>Saved when going back</Text>
+          {/* <Text style={[styles.hint, { color: theme.text + "88" }]}>Saved when going back</Text> */}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   container: { flex: 1 },
   inner: { padding: 16, flex: 1 },
-  header: { fontSize: 20, fontWeight: "700", marginBottom: 12, color: "#0f172a" },
+  header: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
   title: { fontSize: 18, fontWeight: "600", marginBottom: 8, paddingVertical: 6 },
   content: { flex: 1, textAlignVertical: "top", fontSize: 16, paddingTop: 8, paddingBottom: 8 },
   saveBtn: {
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   saveText: { color: "#fff", fontWeight: "700" },
-  hint: { fontSize: 12, color: "#64748b", marginTop: 8 },
+  hint: { fontSize: 12, marginTop: 8 },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",

@@ -1,15 +1,16 @@
 import FloatingAddBtn from "@/components/floatingAddBtn";
 import Header from "@/components/header";
 import OptionsModal from "@/components/optionsModel";
+// import SearchBar from "@/components/searchBar";
+import SearchBar from "@/components/searchBar";
 import BottomTabsNav from "@/navigation/bottomTabs";
 import { useNotes } from "@/storage/notesContext";
 import { useTheme } from "@/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import NoteCard from "../components/noteCard";
-const SearchBar = require("../components/searchBar").default;
 
 
 
@@ -21,10 +22,10 @@ export default function Index() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const router = useRouter();
 
-  const timer = useRef<number | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debouncedSearch = useCallback((val: string) => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setSearchItem(val), 220) as unknown as number;
+    if (timer.current) clearTimeout(timer.current as ReturnType<typeof setTimeout>);
+    timer.current = setTimeout(() => setSearchItem(val), 220);
   }, []);
 
   const filtered = useMemo(() => {
@@ -42,7 +43,7 @@ export default function Index() {
       setSelectedIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
       return;
     }
-    router.push(`/editNotePage?id=${id}` as any);
+    router.push(`/editNotePage?id=${id}`);
   };
 
   const onLongPressCard = (id: string) => {
@@ -89,7 +90,7 @@ export default function Index() {
               <TouchableOpacity
                 style={styles.actionBtn}
                 onPress={() => {
-                  router.push(`/editNotePage?id=${selectedIds[0]}` as any);
+                  router.push(`/editNotePage?id=${selectedIds[0]}`);
                   setSelectedIds([]);
                 }}
               >
@@ -100,7 +101,6 @@ export default function Index() {
             <TouchableOpacity
               style={styles.actionBtn}
               onPress={() => {
-                const { Alert } = require("react-native");
                 Alert.alert(
                   "Delete notes",
                   `Are you sure you want to delete ${selectedIds.length} selected notes?`,

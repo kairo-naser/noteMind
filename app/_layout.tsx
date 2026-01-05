@@ -18,6 +18,7 @@ function AppStack() {
         <Stack.Screen name="setting/index" options={{ headerShown: false }} />
         <Stack.Screen name="addNote/index" options={{ headerShown: false }} />
         <Stack.Screen name="editNotePage/index" options={{ headerShown: false }} />
+        <Stack.Screen name="setting/privacy" options={{ headerShown: false }} />
       </Stack>
     </>
   );

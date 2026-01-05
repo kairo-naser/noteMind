@@ -2,9 +2,6 @@ import React, { createContext, useContext, useMemo, useState } from "react";
 import dark from "./dark";
 import light from "./light";
 
-/**
- * Theme type derived from the light theme shape.
- */
 type Theme = typeof light;
 
 type ThemeContextValue = {
@@ -15,13 +12,12 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-/** Provides theme values and a toggle for light/dark mode. */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<"light" | "dark">("light");
-  const theme = useMemo<Theme>(() => (mode === "light" ? light : dark), [mode]);
+  const theme = useMemo(() => (mode === "light" ? light : dark), [mode]);
   const toggle = () => setMode((m) => (m === "light" ? "dark" : "light"));
 
-  return <ThemeContext.Provider value={{ theme, mode, toggle }}>{children}</ThemeContext.Provider>;
+  return React.createElement(ThemeContext.Provider, { value: { theme: theme as Theme, mode, toggle } }, children);
 };
 
 export const useTheme = () => {

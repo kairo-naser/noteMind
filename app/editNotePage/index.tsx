@@ -6,6 +6,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+/**
+ * Edit Note screen. Saves changes when navigating back or on unmount.
+ */
 const EditNotePage: React.FC = () => {
   const params = useLocalSearchParams();
   const id = (params.id as string) || "";
@@ -17,8 +20,8 @@ const EditNotePage: React.FC = () => {
   const [title, setTitle] = useState(note?.title || "");
   const [content, setContent] = useState(note?.content || "");
   const savedRef = useRef(false);
-  const titleRef = useRef(title);
-  const contentRef = useRef(content);
+  const titleRef = useRef<string>(title);
+  const contentRef = useRef<string>(content);
   const updateNoteRef = useRef(updateNote);
 
   useEffect(() => {
@@ -65,9 +68,9 @@ const EditNotePage: React.FC = () => {
 
   if (!note) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
         <View style={styles.container}>
-          <Text>Note not found</Text>
+          <Text style={{ color: theme.text }}>Note not found</Text>
         </View>
       </SafeAreaView>
     );
@@ -84,8 +87,8 @@ const EditNotePage: React.FC = () => {
         </View>
 
         <View style={styles.inner}>
-          <TextInput style={[styles.title, { color: theme.text }]} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor="#94a3b8" />
-          <TextInput style={[styles.content, { color: theme.text }]} value={content} onChangeText={setContent} placeholder="Content" multiline placeholderTextColor="#94a3b8" />
+          <TextInput style={[styles.title, { color: theme.text }]} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor={theme.text + "88"} />
+          <TextInput style={[styles.content, { color: theme.text }]} value={content} onChangeText={setContent} placeholder="Content" multiline placeholderTextColor={theme.text + "88"} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

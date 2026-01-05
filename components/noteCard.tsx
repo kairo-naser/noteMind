@@ -3,19 +3,26 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type Note = {
+/**
+ * NoteCard component
+ * - shows title and short preview of content
+ * - supports selection state (used for multi-select delete/edit)
+ */
+type NoteType = {
   id: string;
   title: string;
   content?: string;
 };
 
 const NoteCard: React.FC<{
-  note: Note;
+  note: NoteType;
   onPress?: () => void;
   onLongPress?: () => void;
   selected?: boolean;
 }> = ({ note, onPress, onLongPress, selected = false }) => {
   const { theme } = useTheme();
+
+  // numberOfLines + maxHeight keep cards uniform when text is long
   return (
     <TouchableOpacity onPress={onPress} onLongPress={onLongPress} activeOpacity={0.9}>
       <View style={[styles.card, { backgroundColor: theme.card }, selected && { backgroundColor: theme.accent }]}> 
@@ -24,7 +31,11 @@ const NoteCard: React.FC<{
             <Ionicons name="checkmark" size={18} color="#fff" />
           </View>
         ) : null}
+
+        {/* Title: allow up to 2 lines */}
         <Text numberOfLines={2} style={[styles.title, { color: selected ? "#fff" : theme.text }]}>{note.title}</Text>
+
+        {/* Content preview: limit lines so card height stays constrained */}
         {note.content ? (
           <Text numberOfLines={6} style={[styles.content, { color: selected ? "#fff" : theme.text }]}>
             {note.content}
