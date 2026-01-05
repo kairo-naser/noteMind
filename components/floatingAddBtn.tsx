@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -5,11 +6,12 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 const FloatingAddBtn: React.FC = () => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   return (
     <View style={styles.wrapper} pointerEvents="box-none">
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, { backgroundColor: theme.accent }]}
         activeOpacity={0.85}
         onPress={() => router.push('/addNote' as any)}
       >
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#4682BF",
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",

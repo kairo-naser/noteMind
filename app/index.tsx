@@ -1,29 +1,29 @@
 import FloatingAddBtn from "@/components/floatingAddBtn";
 import Header from "@/components/header";
+import OptionsModal from "@/components/optionsModel";
 import BottomTabsNav from "@/navigation/bottomTabs";
 import { useNotes } from "@/storage/notesContext";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, Platform, StyleSheet, View } from "react-native";
-import NoteCard from "../components/noteCard";
-import OptionsModal from "@/components/optionsModel";
+import { useTheme } from "@/theme/themeContext";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-// require the SearchBar to avoid potential default export resolution issues
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import NoteCard from "../components/noteCard";
 const SearchBar = require("../components/searchBar").default;
 
 
 
 export default function Index() {
+  const { theme } = useTheme();
   const [searchItem, setSearchItem] = useState("");
-  const { notes, deleteNote } = useNotes();
+  const { notes, deleteNote, deleteNotes } = useNotes();
   const [optionsVisible, setOptionsVisible] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const router = useRouter();
 
   const timer = useRef<number | null>(null);
   const debouncedSearch = useCallback((val: string) => {
     if (timer.current) clearTimeout(timer.current);
-    // @ts-ignore
     timer.current = setTimeout(() => setSearchItem(val), 220) as unknown as number;
   }, []);
 
@@ -35,23 +35,34 @@ export default function Index() {
     );
   }, [notes, searchItem]);
 
+  const inSelectionMode = selectedIds.length > 0;
+
   const onPressCard = (id: string) => {
+    if (inSelectionMode) {
+      setSelectedIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+      return;
+    }
     router.push(`/editNotePage?id=${id}` as any);
   };
 
   const onLongPressCard = (id: string) => {
-    setSelectedId(id);
-    setOptionsVisible(true);
+    // enter selection mode and select this
+    setSelectedIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   };
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.columnWrapper}>
-      <NoteCard note={item} onPress={() => onPressCard(item.id)} onLongPress={() => onLongPressCard(item.id)} />
+      <NoteCard
+        note={item}
+        onPress={() => onPressCard(item.id)}
+        onLongPress={() => onLongPressCard(item.id)}
+        selected={selectedIds.includes(item.id)}
+      />
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}> 
       <Header />
 
       <SearchBar searchItem={searchItem} setSearchItem={setSearchItem} debouncedSearch={debouncedSearch} />
@@ -60,7 +71,7 @@ export default function Index() {
         data={filtered}
         keyExtractor={(i) => i.id}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { backgroundColor: theme.background }]}
         showsVerticalScrollIndicator={false}
         numColumns={2}
         columnWrapperStyle={styles.row}
@@ -69,11 +80,59 @@ export default function Index() {
       <BottomTabsNav />
       <FloatingAddBtn />
 
+      {/* selection toolbar */}
+      {inSelectionMode ? (
+        <View style={[styles.selectionBar, { backgroundColor: theme.accent }]}> 
+          <Text style={[styles.selectionCount, { color: "#fff" }]}>{selectedIds.length} selected</Text>
+          <View style={styles.selectionActions}>
+            {selectedIds.length === 1 ? (
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => {
+                  router.push(`/editNotePage?id=${selectedIds[0]}` as any);
+                  setSelectedIds([]);
+                }}
+              >
+                <Ionicons name="pencil" size={20} color="#fff" />
+              </TouchableOpacity>
+            ) : null}
+
+            <TouchableOpacity
+              style={styles.actionBtn}
+              onPress={() => {
+                const { Alert } = require("react-native");
+                Alert.alert(
+                  "Delete notes",
+                  `Are you sure you want to delete ${selectedIds.length} selected notes?`,
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => {
+                        deleteNotes(selectedIds);
+                        setSelectedIds([]);
+                      },
+                    },
+                  ]
+                );
+              }}
+            >
+              <Ionicons name="trash" size={20} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionBtn} onPress={() => setSelectedIds([])}>
+              <Ionicons name="close" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
+
       <OptionsModal
         visible={optionsVisible}
         onClose={() => setOptionsVisible(false)}
         onDelete={() => {
-          if (selectedId) deleteNote(selectedId);
+          if (selectedIds.length === 1) deleteNote(selectedIds[0]);
           setOptionsVisible(false);
         }}
       />
@@ -84,7 +143,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
   },
   header: {
     paddingTop: Platform.OS === "android" ? 12 : 18,
@@ -105,7 +163,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   card: {
-    backgroundColor: "#fff",
+    
     borderRadius: 12,
     padding: 14,
     marginBottom: 12,
@@ -118,11 +176,29 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#0f172a",
     marginBottom: 6,
   },
   cardContent: {
     fontSize: 14,
-    color: "#334155",
   },
+  selectionBar: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    bottom: 72,
+    
+    borderRadius: 12,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  selectionCount: { fontWeight: "600", color: "#0f172a" },
+  selectionActions: { flexDirection: "row", alignItems: "center" },
+  actionBtn: { paddingHorizontal: 10, paddingVertical: 6 },
 });

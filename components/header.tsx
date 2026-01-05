@@ -1,12 +1,16 @@
+import { useTheme } from "@/theme/themeContext";
 import React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Header: React.FC = () => {
+  const { theme } = useTheme();
   return (
-    <SafeAreaView><View style={styles.container}>
-      <Text style={styles.title}>noteMind</Text>
-    </View></SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: theme.accent }}>
+      <View style={[styles.container, { backgroundColor: theme.accent }]}> 
+        <Text style={[styles.title, { color: '#fff' }]}>noteMind</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -15,12 +19,10 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? 18 : 36,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    backgroundColor: "#5990c7b2",
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#ffffffff",
   },
   subtitle: {
     fontSize: 12,

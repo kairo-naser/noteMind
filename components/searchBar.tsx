@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, TextInput, View } from "react-native";
@@ -15,14 +16,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	debouncedSearch,
 	placeholder = "Search tasks...",
 }) => {
+	const { theme } = useTheme();
 	return (
 		<View style={styles.wrapper}>
-			<View style={styles.searchBar}>
-				<Ionicons name="search" size={20} color="#4682BF" />
+			<View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.accent + "22" }]}> 
+				<Ionicons name="search" size={20} color={theme.accent} />
 				<TextInput
 					placeholder={placeholder}
-					placeholderTextColor="#7a8aa3"
-					style={styles.searchInput}
+					placeholderTextColor={theme.text + "88"}
+					style={[styles.searchInput, { color: theme.text }]}
 					clearButtonMode="while-editing"
 					onChangeText={(item) => {
 						setSearchItem(item);

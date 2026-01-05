@@ -1,3 +1,4 @@
+import { useTheme } from "@/theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -5,16 +6,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const BottomTabsNav = () => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => router.push('/') }>
-          <Ionicons name="home" size={24} style={styles.icons} />
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]} edges={["bottom"]}>
+      <View style={[styles.container, { backgroundColor: theme.card, borderTopColor: 'rgba(0,0,0,0.06)', borderTopWidth: 1 }]}> 
+        <TouchableOpacity onPress={() => router.push('/')}>
+          <Ionicons name="home" size={24} color={theme.accent} />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/setting') }>
-          <Ionicons name="settings" size={24} style={styles.icons} />
+        <TouchableOpacity onPress={() => router.push('/setting')}>
+          <Ionicons name="settings" size={24} color={theme.accent} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
