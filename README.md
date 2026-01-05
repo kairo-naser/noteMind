@@ -48,3 +48,53 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+NoteMind/
+│
+├─ App.js                 # Entry point of the app
+├─ app.json               # Expo config
+├─ package.json           # Project dependencies
+│
+├─ assets/                # Static files (images, icons, fonts)
+│   ├─ images/
+│   ├─ icons/
+│   └─ fonts/
+│
+├─ constants/             # App-wide constants
+│   ├─ Colors.js          # Colors used in the app
+│   ├─ Fonts.js           # Font sizes & families
+│   └─ Layout.js          # Spacing, dimensions
+│
+├─ navigation/            # App navigation
+│   └─ AppNavigator.js    # Stack/Tab navigator setup
+│
+├─ pages/                 # Your app “pages” (like website pages)
+│   ├─ NotesListPage/     # Home page, list of notes
+│   │   ├─ index.js       # Page entry (renders UI)
+│   │   └─ styles.js      # Page-specific styles
+│   │
+│   ├─ EditNotePage/      # Create / Edit note page
+│   │   ├─ index.js
+│   │   └─ styles.js
+│   │
+│   ├─ SearchPage/        # Search notes
+│   │   ├─ index.js
+│   │   └─ styles.js
+│   │
+│   └─ SettingsPage/      # Settings
+│       ├─ index.js
+│       └─ styles.js
+│
+├─ components/            # Reusable UI components
+│   ├─ NoteCard.js        # Small note preview card
+│   ├─ Header.js          # Page header
+│   ├─ FloatingButton.js  # Add button
+│   └─ Input.js           # Custom input field
+│
+├─ storage/               # Local data management
+│   └─ notesStorage.js    # CRUD logic with AsyncStorage or similar
+│
+└─ utils/                 # Utility/helper functions
+    ├─ helpers.js
+    └─ validators.js
