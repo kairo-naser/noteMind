@@ -10,91 +10,139 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+## NoteMind
 
-   ```bash
-   npx expo start
-   ```
+NoteMind is a small, lightweight note-taking app built with Expo and React Native. It provides a simple local notes experience (create, edit, delete) with a minimal, themeable UI and file-based routing via `expo-router`.
 
-In the output, you'll find options to open the app in a
+This repository is intended as a compact starter for learning how to build cross-platform mobile apps with Expo and React Native while keeping state and storage simple using React Context and `AsyncStorage`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Key Features
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Create, edit and delete notes.
+- Local persistence using `@react-native-async-storage/async-storage`.
+- Light / Dark theming via a `ThemeProvider` and easy color tokens.
+- File-based routing with `expo-router`.
+- Small set of reusable components (header, note card, floating action button).
 
-## Get a fresh project
+### Technology & Dependencies
 
-When you're ready, run:
+- Expo (SDK ~54)
+- React Native (~0.81)
+- TypeScript
+- expo-router
+- @expo/vector-icons
+- @react-native-async-storage/async-storage
+- react-native-safe-area-context
+- react-navigation (bottom tabs)
 
-```bash
-npm run reset-project
+See `package.json` for the full and exact dependency versions.
+
+### Scripts
+
+- `npm start` — start the Expo dev server.
+- `npm run android` — start on Android.
+- `npm run ios` — start on iOS.
+- `npm run web` — start for web.
+- `npm run lint` — run ESLint.
+- `npm run reset-project` — helper script from the template.
+
+### Project structure
+
+```
+.
+├─ app.json
+├─ package.json
+├─ tsconfig.json
+├─ README.md
+├─ app/                      # App routes / pages (expo-router)
+│   ├─ _layout.tsx
+│   ├─ index.tsx             # Home / notes list
+│   ├─ addNote/
+│   │   └─ index.tsx         # Add note screen
+│   ├─ editNotePage/
+│   │   └─ index.tsx         # Edit note screen
+│   └─ setting/
+│       ├─ index.tsx         # Settings screen
+│       └─ privacy.tsx       # Privacy / policy screen
+│
+├─ assets/
+│   └─ images/
+│
+├─ components/
+│   ├─ header.tsx
+│   ├─ floatingAddBtn.tsx
+│   ├─ noteCard.tsx
+│   ├─ optionsModel.tsx
+│   └─ searchBar.tsx
+│
+├─ navigation/
+│   └─ bottomTabs.tsx
+│
+├─ storage/
+│   ├─ notesContext.tsx     # React Context provider for notes
+│   └─ notesStorage.ts      # Sample seed notes / types
+│
+└─ theme/
+   ├─ light.ts
+   ├─ dark.ts
+   └─ themeContext.tsx     # ThemeProvider + useTheme hook
+
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Storage & Data
 
-## Learn more
+Notes are persisted locally using `@react-native-async-storage/async-storage` under the key `@noteMind:notes`. When the app has no saved notes it seeds them from `storage/notesStorage.ts`.
 
-To learn more about developing your project with Expo, look at the following resources:
+`storage/notesContext.tsx` provides:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- `notes` — current notes.
+- `addNote(note)` — add a note.
+- `updateNote(id, patch)` — update a note.
+- `deleteNote(id)` — delete a note.
+- `deleteNotes(ids)` — delete multiple.
 
-## Join the community
+Mutations update state and persist to storage automatically.
 
-Join our community of developers creating universal apps.
+### Theming
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+`theme/` contains `light.ts` and `dark.ts` tokens and a `ThemeProvider` (`theme/themeContext.tsx`). Use `useTheme()` in components to read `theme`, `mode`, and `toggle()`.
 
+### Navigation
 
-NoteMind/
-│
-├─ App.js                 # Entry point of the app
-├─ app.json               # Expo config
-├─ package.json           # Project dependencies
-│
-├─ assets/                # Static files (images, icons, fonts)
-│   ├─ images/
-│   ├─ icons/
-│   └─ fonts/
-│
-├─ constants/             # App-wide constants
-│   ├─ Colors.js          # Colors used in the app
-│   ├─ Fonts.js           # Font sizes & families
-│   └─ Layout.js          # Spacing, dimensions
-│
-├─ navigation/            # App navigation
-│   └─ AppNavigator.js    # Stack/Tab navigator setup
-│
-├─ pages/                 # Your app “pages” (like website pages)
-│   ├─ NotesListPage/     # Home page, list of notes
-│   │   ├─ index.js       # Page entry (renders UI)
-│   │   └─ styles.js      # Page-specific styles
-│   │
-│   ├─ EditNotePage/      # Create / Edit note page
-│   │   ├─ index.js
-│   │   └─ styles.js
-│   │
-│   ├─ SearchPage/        # Search notes
-│   │   ├─ index.js
-│   │   └─ styles.js
-│   │
-│   └─ SettingsPage/      # Settings
-│       ├─ index.js
-│       └─ styles.js
-│
-├─ components/            # Reusable UI components
-│   ├─ NoteCard.js        # Small note preview card
-│   ├─ Header.js          # Page header
-│   ├─ FloatingButton.js  # Add button
-│   └─ Input.js           # Custom input field
-│
-├─ storage/               # Local data management
-│   └─ notesStorage.js    # CRUD logic with AsyncStorage or similar
-│
-└─ utils/                 # Utility/helper functions
-    ├─ helpers.js
-    └─ validators.js
+File-based routing is handled by `expo-router`. Bottom tabs are in `navigation/bottomTabs.tsx`. Example navigation call: `router.push('/setting/privacy')`.
+
+### How to run
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Start the Expo dev server
+
+```bash
+npm start
+```
+
+3. Launch on emulator/device via the Expo dev tools or
+
+```bash
+npm run android
+npm run ios
+npm run web
+```
+
+### Development notes
+
+- Consider adding tests and stronger error handling for persistence.
+- To add a screen, create a new file/folder inside `app/` and follow the routing conventions.
+- Keep UI colors in `theme/*` and prefer `useTheme()`.
+
+### Contributing
+
+Open issues or PRs. Keep changes small and update types when changing storage or theme shapes.
+
+### License
+
+No license specified. Add a `LICENSE` file if planning to open-source.
